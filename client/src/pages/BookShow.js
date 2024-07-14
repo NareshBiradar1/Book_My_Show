@@ -7,6 +7,7 @@ import { message, Card, Row, Col, Button } from "antd";
 import moment from "moment";
 import { bookShow, makePayment } from "../calls/bookings";
 import StripeCheckout from "react-stripe-checkout";
+import './BookShow.css';
 
 const BookShow = () => {
   const { user } = useSelector((state) => state.user);
@@ -84,7 +85,7 @@ const BookShow = () => {
 
               if (seatNumber <= totalSeats)
                 return (
-                  <li>
+                  <li key={seatNumber}>
                     <button
                       onClick={() => {
                         if (selectedSeats.includes(seatNumber)) {
@@ -112,8 +113,7 @@ const BookShow = () => {
             Selected Seats: <span>{selectedSeats.join(", ")}</span>
           </div>
           <div className="flex-shrink-0 ms-3">
-            Total Price:{" "}
-            <span>Rs. {selectedSeats.length * show.ticketPrice}</span>
+          Total Price: <span>Rs. {selectedSeats.length * show.ticketPrice}</span>
           </div>
         </div>
       </div>
