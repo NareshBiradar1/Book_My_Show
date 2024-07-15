@@ -1,18 +1,21 @@
-import "./App.css";
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import ProtectedRoute from "./components/ProtectedRoute";
-import { useSelector } from "react-redux";
-import Profile from "./pages/Profile";
-import Admin from "./pages/Admin";
-import BookShow from "./pages/BookShow";
-import SingleMovie from "./pages/SingleMovie";
-import Partner from "./pages/Partner";
-import Forget from "./pages/Forget";
-import Reset from "./pages/Reset";
+import Home from './pages/Home';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Profile from './pages/Profile';
+import Admin from './pages/Admin';
+import Partner from './pages/Partner';
+import BookShow from './pages/BookShow';
+import SingleMovie from './pages/SingleMovie';
+import Forget from './pages/Forget';
+import Reset from './pages/Reset';
+import Unauthorized from './pages/Unauthorized'; // Ensure this is correctly imported
+import ProtectedRoute from './components/ProtectedRoute';
+
+import './App.css';
 
 function App() {
   const { loading } = useSelector((state) => state.loader);
@@ -21,8 +24,7 @@ function App() {
     <div className="App">
       {loading && (
         <div className="loader-container">
-          {" "}
-          <div className="loader"> </div>{" "}
+          <div className="loader"></div>
         </div>
       )}
       <BrowserRouter>
@@ -30,7 +32,7 @@ function App() {
           <Route
             path="/"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['admin', 'partner', 'user']}>
                 <Home />
               </ProtectedRoute>
             }
@@ -38,7 +40,7 @@ function App() {
           <Route
             path="/admin"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['admin']}>
                 <Admin />
               </ProtectedRoute>
             }
@@ -46,7 +48,7 @@ function App() {
           <Route
             path="/profile"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['admin', 'partner', 'user']}>
                 <Profile />
               </ProtectedRoute>
             }
@@ -54,7 +56,7 @@ function App() {
           <Route
             path="/partner"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['partner']}>
                 <Partner />
               </ProtectedRoute>
             }
@@ -63,8 +65,22 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path='/forget' element={<Forget/>}/>
           <Route path='/reset' element={<Reset/>}/>
-          <Route path="/movie/:id" element={<ProtectedRoute><SingleMovie/></ProtectedRoute>} />
-          <Route path="/book-show/:id" element={<ProtectedRoute><BookShow/></ProtectedRoute>} />
+          <Route 
+          path="/movie/:id" 
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'partner', 'user']}>
+            <SingleMovie/>
+            </ProtectedRoute>
+          } />
+          <Route path="/book-show/:id" element={
+          <ProtectedRoute allowedRoles={['admin', 'partner', 'user']}>
+            <BookShow/>
+            </ProtectedRoute>
+          } />
+           <Route
+            path="/unauthorized"
+            element={<Unauthorized />} // Unauthorized access route
+          />
         </Routes>
       </BrowserRouter>
     </div>
