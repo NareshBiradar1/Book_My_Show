@@ -56,6 +56,21 @@ function ProtectedRoute({ children, allowedRoles }) {
   }
 
   // Only render children if there is a user and the user's role is allowed
+  const navigateToProfile = () => {
+    switch (user.role) {
+      case "admin":
+        navigate("/admin");
+        break;
+      case "partner":
+        navigate("/partner");
+        break;
+      case "user":
+        navigate("/profile");
+        break;
+      default:
+        navigate("/");
+    }
+  };
   return user ? (
     <Layout>
       <Header
@@ -83,7 +98,7 @@ function ProtectedRoute({ children, allowedRoles }) {
               children: [
                 {
                   label: (
-                    <span onClick={() => navigate(`/${user.role}`)}>
+                    <span onClick={navigateToProfile}>
                       My Profile
                     </span>
                   ),
