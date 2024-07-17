@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { hideLoading, showLoading } from "../redux/loaderSlice";
 import { getShowById } from "../calls/shows";
 import { useNavigate, useParams } from "react-router-dom";
-import { message, Card, Row, Col, Button } from "antd";
+import { message, Card, Row, Col, Button, Tooltip } from "antd";
 import moment from "moment";
 import { bookShow, makePayment } from "../calls/bookings";
 import StripeCheckout from "react-stripe-checkout";
@@ -86,25 +86,27 @@ const BookShow = () => {
               if (seatNumber <= totalSeats)
                 return (
                   <li key={seatNumber}>
-                    <button
-                      onClick={() => {
-                        if (!show.bookedSeats.includes(seatNumber)) { // Check if the seat is not booked
-                          if (selectedSeats.includes(seatNumber)) {
-                            setSelectedSeats(
-                              selectedSeats.filter(
-                                (curSeatNumber) => curSeatNumber !== seatNumber
-                              )
-                            );
-                          } else {
-                            setSelectedSeats([...selectedSeats, seatNumber]);
+                    <Tooltip title={show.bookedSeats.includes(seatNumber) ? "This seat is already booked" : "Click to book this seat"}>
+
+                      <button
+                        onClick={() => {
+                          if (!show.bookedSeats.includes(seatNumber)) {
+                            if (selectedSeats.includes(seatNumber)) {
+                              setSelectedSeats(
+                                selectedSeats.filter(
+                                  (curSeatNumber) => curSeatNumber !== seatNumber
+                                )
+                              );
+                            } else {
+                              setSelectedSeats([...selectedSeats, seatNumber]);
+                            }
                           }
-                        }
-                      }}
-                      
-                      className={seatClass}
-                    >
-                      {seatNumber}
-                    </button>
+                        }}
+                        className={seatClass}
+                      >
+                        {seatNumber}
+                      </button>
+                    </Tooltip>
                   </li>
                 );
             });
@@ -116,7 +118,7 @@ const BookShow = () => {
             Selected Seats: <span>{selectedSeats.join(", ")}</span>
           </div>
           <div className="flex-shrink-0 ms-3">
-          Total Price: <span>Rs. {selectedSeats.length * show.ticketPrice}</span>
+            Total Price: <span>Rs. {selectedSeats.length * show.ticketPrice}</span>
           </div>
         </div>
       </div>
@@ -155,7 +157,7 @@ const BookShow = () => {
       if (response.success) {
         message.success(response.message);
         book(response.data);
-         console.log(response);
+        console.log(response);
       } else {
         message.error(response.message);
       }
@@ -214,9 +216,9 @@ const BookShow = () => {
               {selectedSeats.length > 0 && (
                 <StripeCheckout
                   token={onToken}
-                  amount={selectedSeats.length * show.ticketPrice*100}
-            
-        
+                  amount={selectedSeats.length * show.ticketPrice * 100}
+
+
                   stripeKey="pk_test_51JKPQWSJULHQ0FL7VOkMrOMFh0AHMoCFit29EgNlVRSvFkDxSoIuY771mqGczvd6bdTHU1EkhJpojOflzoIFGmj300Uj4ALqXa"
                 >
                   {/* Use this one in some situation=> pk_test_eTH82XLklCU1LJBkr2cSDiGL001Bew71X8  */}
